@@ -14,6 +14,8 @@ dependencies:
   - certifi=2023.11.17=py312haa95532_0
   - cffi=1.16.0=py312h2bbff1b_0
   - charset-normalizer=2.0.4=pyhd3eb1b0_0
+  - click=8.1.7=py312haa95532_0
+  - colorama=0.4.6=py312haa95532_0
   - cryptography=41.0.7=py312h89fc84f_0
   - discord.py=2.3.2=pyhd8ed1ab_0
   - frozenlist=1.4.1=py312he70551f_0
@@ -39,6 +41,7 @@ dependencies:
   - pysocks=1.7.1=py312haa95532_0
   - python=3.12.1=h2628c8c_1_cpython
   - python-dateutil=2.8.2=pyhd3eb1b0_0
+  - python-dotenv=0.21.0=py312haa95532_0
   - python-tzdata=2023.3=pyhd3eb1b0_0
   - python_abi=3.12=4_cp312
   - pytz=2023.3.post1=py312haa95532_0
@@ -57,4 +60,4 @@ dependencies:
   - win_inet_pton=1.1.0=py312haa95532_0
   - xz=5.2.6=h8d14728_0
   - yarl=1.9.3=py312he70551f_0
-prefix: C:\Users\matsuzaki\anaconda3\envs\botenv
+prefix: C:\Users\mitei\anaconda3\envs\botenv

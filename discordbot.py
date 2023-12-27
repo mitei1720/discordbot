@@ -1,9 +1,11 @@
 # インストールした discord.py を読み込む
 import discord
 from discord import app_commands
+import settings
 
-# 自分のBotのアクセストークンに置き換えてください
-TOKEN = 'MTE4OTEwMzk2NTM3NjM2ODY5MQ.GAQ-FG._eOLCw573dFSqDO2NW3kjyyFKRGs5NL1FnIo2M'
+
+TOKEN = settings.BOT_TOKEN
+
 
 
 intents = discord.Intents.all()  # デフォルトのIntentsオブジェクトを生成

@@ -3,12 +3,12 @@ import discord
 from discord import app_commands
 from functools import wraps
 import random
+import settings
 
 
-TOKEN = 'MTE4OTEwMzk2NTM3NjM2ODY5MQ.GAQ-FG._eOLCw573dFSqDO2NW3kjyyFKRGs5NL1FnIo2M'
-
-
-MY_GUILD = discord.Object(id=1155517280134909952)  # replace with your guild id
+#settingから読み込み
+TOKEN = settings.BOT_TOKEN
+MY_GUILD = discord.Object(id=settings.GUILD_ID)  # replace with your guild id
 
 
 class MyClient(discord.Client):
