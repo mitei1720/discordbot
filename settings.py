@@ -12,3 +12,6 @@ load_dotenv(dotenv_path)
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 GUILD_ID = os.environ.get("GUILD_ID")
 UNI_TOKEN = os.environ.get("UNIREC_TOKEN")
+MOGI_ROLE = os.environ.get("MOGI_ROLE")
+SA_ROLE = os.environ.get("SA_ROLE")
+
