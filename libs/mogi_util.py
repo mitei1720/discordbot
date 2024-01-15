@@ -188,6 +188,61 @@ def init_all() -> int:
         );
             """
         db.query(sql1)
+        sql2 = """
+            CREATE TABLE if not exists all_sa
+        (
+            "id" INTEGER,
+            "ev_id" INTEGER,
+            "start" TEXT,
+            "end" TEXT,
+            "p_amount" INTEGER,
+            "p_rank" INTEGER,
+            "player_id" INTEGER,
+            "score" INTEGER,
+            "player_maxrate" REAL,
+            "player_mr" INTEGER,
+            "new_mr" INTEGER,
+            "assign" TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
+            """
+        db.query(sql2)
+        sql3 = """
+            CREATE TABLE if not exists sa_info
+        (
+            "ev_id" INTEGER,
+            "start" TEXT,
+            "end" TEXT,
+            "chan_id" INTEGER,
+            "h_song1" TEXT,
+            "h_song2" TEXT,
+            "l_song1" TEXT,
+            "l_song2" TEXT,
+            "p_amount" INTEGER,
+            "ph_amount" INTEGER,
+            "pl_amount" INTEGER,
+            PRIMARY KEY("ev_id" AUTOINCREMENT)
+        );
+            """
+        db.query(sql3)
+        sql4 = """
+            CREATE TABLE if not exists sa_cur
+        (
+            "id" INTEGER,
+            "start" TEXT,
+            "end" TEXT,
+            "chan_id" INTEGER,
+            "h_song1" TEXT,
+            "h_song2" TEXT,
+            "l_song1" TEXT,
+            "l_song2" TEXT,
+            "p_amount" INTEGER,
+            "ph_amount" INTEGER,
+            "pl_amount" INTEGER,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
+            """
+        db.query(sql4)
         dat =  {"season":0}
         db.set("all_2v2",dat)
         db.commit()

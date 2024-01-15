@@ -31,20 +31,22 @@ from functools import wraps
 #       rate            股濡レート
 #
 #
-#   all_sc        全スコアタ情報
+#   all_sa        全スコアタ情報
 #   カラム名
 #       id              PRIMARY KEY
+#       ev_id           スコアタ識別ID  (sa_infoを連携)
 #       start           イベント開始日時
 #       end             イベント終了日時
-#       h_song1         高課題曲1のid
-#       h_song2         高課題曲2のid
-#       l_song1         低課題曲1のid
-#       l_song2         低課題曲2のid
-#       p_amount        イベント参加者
-#       player_id[0-99] 参加者のid情報
-#       pl_score[0-99]  参加者のスコア(課題曲1)
-#       pl_score[0-99]  参加者のスコア(課題曲2)  
-#       new_mr[0-99]    参加者の新MR
+#       p_amount        プレイヤー参加数
+#       p_rank          順位           -1で初期化          
+#       player_id       プレイヤーID    
+#       score           スコア 0で初期化     
+#       player_maxrate  プレイヤーのレート最高到達点    未登録は-1
+#       player_mr       プレイヤーのMR  未登録は-1　   登録はplayerのmrで初期化(終了時のMRをもう一度取得忘れずに!)
+#       new_mr          スコアタ後のMR  未登録は-1 
+#       assign          取り組んだ課題種別 ["l","h","yet"]　"yet"で初期化
+#       
+#       
 #       
 #
 #   all_2v2        全2v2mogi情報
@@ -60,22 +62,36 @@ from functools import wraps
 #       pl2_score[0-3]  参加者のスコア(課題曲2)   
 #       pl3_score[0-3]  参加者のスコア(課題曲3)   
 #       new_mr[0-3]     参加者の新MR
-#       
-#   cur_sc        現在のスコアタ情報
+
+
+
+#   sa_info        過去のスコアタ情報
 #   カラム名
+#       ev_id           PRIMARY KEY(cur_saのIDを継ぐ)
 #       start           イベント開始日時
 #       end             イベント終了日時
 #       chan_id         使用したチャンネルid
-#       h_song1         高課題曲1のid
+#       h_song1         高課題曲1のid "_"で初期化
 #       h_song2         高課題曲2のid
 #       l_song1         低課題曲1のid
 #       l_song2         低課題曲2のid
-#       p_amount        イベント参加者
-#       player_id[0-99] 参加者のid情報
-#       pl_score[0-99]  参加者のスコア(課題曲1)
-#       pl_score[0-99]  参加者のスコア(課題曲2)  
-#       new_mr[0-99]    参加者の新MR
+#       p_amount        イベント参加者 0で初期化
+#       ph_amount       高難易度提出数　
+#       pl_amount       低難易度提出数
 #       
+#   sa_cur        現在のスコアタ情報
+#   カラム名
+#       id              PRIMARY KEY
+#       start           イベント開始日時
+#       end             イベント終了日時
+#       chan_id         使用したチャンネルid
+#       h_song1         高課題曲1のid　"_"で初期化
+#       h_song2         高課題曲2のid
+#       l_song1         低課題曲1のid
+#       l_song2         低課題曲2のid
+#       p_amount        イベント参加者　0で初期化
+#       ph_amount       高難易度提出数
+#       pl_amount       低難易度提出数
 #
 #   cur_2v2        全2v2mogi情報
 #   カラム名[確定]

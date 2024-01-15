@@ -41,7 +41,7 @@ class Mogi(commands.Cog):
     #debugged
     @app_commands.command()
     @app_commands.check(is_regichan)
-    async def register(self, interaction: discord.Interaction, username:str="username",maxrate:float=16.00):
+    async def register(self, interaction: discord.Interaction, username:str,maxrate:float):
         """スコアタ登録コマンド,username(英数字のみ)とmaxrateは必須"""
 
         # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
@@ -51,6 +51,19 @@ class Mogi(commands.Cog):
         #上を使う場合はawait interaction.followup.send(message, ephemeral=hidden) (返り値webhook注意)
 
         #登録
+        if username is None:
+            await interaction.response.send_message("usernameを入力してください",ephemeral=True)
+            return
+        
+        if maxrate is None:
+            await interaction.response.send_message("maxrateを入力してください",ephemeral=True)
+            return
+        
+        if not (username.isalnum()):
+            await interaction.response.send_message("usernameに記号を含めないでください",ephemeral=True)
+            return
+
+
         suc,rate = mou.player_register(username,interaction.user.id,maxrate)
 
         if suc is True:
@@ -325,7 +338,7 @@ class Mogi(commands.Cog):
                         #課題曲が既に登録済みかをチェック
                         if mogi.songs[0] == "_":
                             #課題決定処理
-
+                            await interaction.response.send_message("...")
                             channel = self.bot.get_channel(interaction.channel_id)
                             slist, mes =  mu.searchpick(title,genre,level,level_from,level_to,diff)
                             if(slist is None):
@@ -343,6 +356,13 @@ class Mogi(commands.Cog):
                                 embed = slist[0].make_embed()
                                 await channel.send(embed = embed)
                                 await channel.send("次にチーム2の方お願いします。")
+                                
+                                guild = self.bot.get_guild(int(settings.GUILD_ID))
+                                mentionstr = ""
+                                for i,player in enumerate(mogi.players):
+                                    if mogi.teams[i] == 2:
+                                        mentionstr = mentionstr + guild.get_member(player).mention +" "
+                                await channel.send(mentionstr)
 
                         else:
                             await interaction.response.send_message("チーム1選出の課題曲は決定済みです\n\n")
@@ -353,7 +373,7 @@ class Mogi(commands.Cog):
                                 await interaction.response.send_message("チーム1選出の課題曲が決定されるまでお待ちください\n\n")
                             else:
                                 #課題決定処理
-
+                                await interaction.response.send_message("...")
                                 channel = self.bot.get_channel(interaction.channel_id)
                                 slist, mes =  mu.searchpick(title,genre,level,level_from,level_to,diff)
                                 if(slist is None):
@@ -390,7 +410,7 @@ class Mogi(commands.Cog):
                                         embed.add_field(name="課題3",value=str(songs[2]))
                                     
 
-                                        await channel.send("曲が未解禁等の場合はBot Staffを呼んでください\nスコアの提出は、リザルトの写真を送信した後、\n!submit [課題番号] [点数]\nを送信することで完了します。\n\n4人全員が全課題曲のスコアを提出し終えたとき、\n"+mogi.enddate+"になったとき模擬を終了しますのでご注意ください。")
+                                        await channel.send("曲が未解禁等の場合はBot Staffを呼んでください\nスコアの提出は、リザルトの写真を送信した後、\n!submit [課題番号] [点数]\nを送信することで完了します。\n例: !submit 1 1010000\n\n4人全員が全課題曲のスコアを提出し終えたとき、\n"+mogi.enddate+"になったとき模擬を終了しますのでご注意ください。")
                                         await channel.send(embed = embed)
 
                         else:
@@ -467,7 +487,6 @@ class Mogi(commands.Cog):
     async def is_fin(self):
     # 現在の時刻
         now = dt.datetime.now()
-        print(now.strftime('%Y/%m/%d %H:%M:%S.%f'))
         for chan_id in MOGI_CHANNELS:
             #mogiが開催されていたら
             if mou.is_on_mogi(chan_id):
@@ -475,7 +494,8 @@ class Mogi(commands.Cog):
                 canfin = False
                 with mou.Mogi2v2(chan_id) as mogi:
                     canfin =  dt.datetime.strptime(mogi.enddate, '%Y/%m/%d %H:%M:%S.%f') < now
-
+                    print("mogi_end:\t"+mogi.enddate)
+                    print("mogi_end_can:\t"+str(canfin))
                 if canfin:
                     task1 = asyncio.create_task(self.mogiend(chan_id))
                     await task1

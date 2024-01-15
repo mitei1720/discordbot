@@ -69,7 +69,7 @@ class Music_data:
 
     #debugged
     def __str__(self):
-        return f"タイトル:\t{ self.name }\nジャンル:\t{ self.genre }\n難易度:\t{ (str(self.level)).replace('.5','+').replace('.0','')}\n定数:\t{self.lconst}"
+        return f"タイトル:\t{ self.name }\nジャンル:\t{ self.genre }\n難易度:\t{ self.diff}\n定数:\t{self.lconst}"
     
     
 

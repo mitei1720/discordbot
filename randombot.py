@@ -12,7 +12,8 @@ MY_GUILD = discord.Object(id=settings.GUILD_ID)  # replace with your guild id
 INITIAL_EXTENSIONS = [
   "cogs.random",
   "cogs.o_side",
-  "cogs.mogi"
+  "cogs.mogi",
+  "cogs.score_atttack"
 ]
 
 
