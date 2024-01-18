@@ -1,4 +1,4 @@
-FROM python:3.12.1
+FROM python:3.11
 WORKDIR /bot
 COPY requirement.txt /bot/
 RUN pip install -r requirement.txt
