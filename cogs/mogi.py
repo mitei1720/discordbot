@@ -316,6 +316,24 @@ class Mogi(commands.Cog):
     @app_commands.command()
     @app_commands.check(is_mogichan)
     @app_commands.describe( title='曲タイトル(部分一致)',genre='曲のジャンル',level='譜面定数',level_from='譜面定数下限',level_to='譜面定数上限',diff='難易度')
+    @app_commands.choices(
+        diff=[
+            discord.app_commands.Choice(name="BAS",value="BAS"),
+            discord.app_commands.Choice(name="ADV",value="ADV"),
+            discord.app_commands.Choice(name="EXP",value="EXP"),
+            discord.app_commands.Choice(name="MAS",value="MAS"),
+            discord.app_commands.Choice(name="ULT",value="ULT")
+        ],
+        genre=[
+            discord.app_commands.Choice(name="POPS&ANIME",value="POPS&ANIME"),
+            discord.app_commands.Choice(name="niconico",value="niconico"),
+            discord.app_commands.Choice(name="VARIETY",value="VARIETY"),
+            discord.app_commands.Choice(name="東方Project",value="東方Project"),
+            discord.app_commands.Choice(name="イロドリミドリ",value="イロドリミドリ"),
+            discord.app_commands.Choice(name="ORIGINAL",value="ORIGINAL"),
+            discord.app_commands.Choice(name="ゲキマイ",value="ゲキマイ")
+        ]
+    )
     async def spick(self, 
                     interaction:discord.Interaction,
                     title:str = None,
@@ -480,8 +498,7 @@ class Mogi(commands.Cog):
                     #------------------------------------------------------
 
         else:
-            await channel.send("[Error] Try again")
-
+            return
     #debugged
     @tasks.loop(minutes = 1)
     async def is_fin(self):

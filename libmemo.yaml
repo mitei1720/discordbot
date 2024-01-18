@@ -61,4 +61,4 @@ dependencies:
   - win_inet_pton=1.1.0=py312haa95532_0
   - xz=5.2.6=h8d14728_0
   - yarl=1.9.3=py312he70551f_0
-prefix: C:\Users\matsuzaki\anaconda3\envs\botenv
+

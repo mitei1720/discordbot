@@ -51,6 +51,24 @@ class CRandom(commands.Cog):
 
     
     @app_commands.command()
+    @app_commands.choices(
+        diff=[
+            discord.app_commands.Choice(name="BAS",value="BAS"),
+            discord.app_commands.Choice(name="ADV",value="ADV"),
+            discord.app_commands.Choice(name="EXP",value="EXP"),
+            discord.app_commands.Choice(name="MAS",value="MAS"),
+            discord.app_commands.Choice(name="ULT",value="ULT")
+        ],
+        genre=[
+            discord.app_commands.Choice(name="POPS&ANIME",value="POPS&ANIME"),
+            discord.app_commands.Choice(name="niconico",value="niconico"),
+            discord.app_commands.Choice(name="VARIETY",value="VARIETY"),
+            discord.app_commands.Choice(name="東方Project",value="東方Project"),
+            discord.app_commands.Choice(name="イロドリミドリ",value="イロドリミドリ"),
+            discord.app_commands.Choice(name="ORIGINAL",value="ORIGINAL"),
+            discord.app_commands.Choice(name="ゲキマイ",value="ゲキマイ")
+        ]
+    )
     @app_commands.describe( genre='曲のジャンル',level='譜面定数',level_from='譜面定数下限',level_to='譜面定数上限',diff='難易度',username='mogiの名前,入力するとスコア目標を追加で表示します')
     async def rpick(self, interaction: discord.Interaction, 
                       genre:str = None,

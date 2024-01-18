@@ -66,8 +66,8 @@ class SA(commands.Cog):
         """
         #cancel_saを呼び出す
         await interaction.response.send_message("現在のスコアタを中止します\n")
-        with su.MogiSA(SA_INFO) as mogi:
-            mogi.cansel_sa()
+        task1 = asyncio.create_task(self.end_sa(SA_INFO))
+        await task1
         self.managesa.stop()
 
         
@@ -156,7 +156,7 @@ class SA(commands.Cog):
                         await channel.send("提出種別を確認してください")
 
         else:
-            await channel.send("[Error] Try again")
+            return
 
     #debugged
     @tasks.loop(minutes = 1)

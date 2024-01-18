@@ -113,7 +113,7 @@ class MogiSA(du.DBwrapper):
             self.is_new = True
             tmp_dt = dt.datetime.now()
             self.start = tmp_dt.strftime('%Y/%m/%d %H:%M:%S.%f')
-            self.end = (tmp_dt + dt.timedelta(minutes=5)).strftime('%Y/%m/%d %H:%M:%S.%f')
+            self.end = (tmp_dt + dt.timedelta(weeks=1)).strftime('%Y/%m/%d %H:%M:%S.%f')
             self.hsongs = ["_","_"]
             self.lsongs = ["_","_"]
             self.p_amount = 0
