@@ -1,6 +1,6 @@
 FROM python:3.12.1
 WORKDIR /bot
-COPY requirements.txt /bot/
+COPY requirement.txt /bot/
 RUN pip install -r requirement.txt
 COPY . /bot
 CMD python randombot.py
