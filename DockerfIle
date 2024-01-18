@@ -3,4 +3,4 @@ WORKDIR /bot
 COPY requirement.txt /bot/
 RUN pip install -r requirement.txt
 COPY . /bot
-CMD python randombot.py
+CMD python main.py
