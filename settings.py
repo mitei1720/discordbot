@@ -15,7 +15,7 @@ load_dotenv(dotenv_path)
 #MOGI_ROLE = os.environ.get("MOGI_ROLE")
 #SA_ROLE = os.environ.get("SA_ROLE")
 
-TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 GUILD_ID = os.getenv("GUILD_ID")
 UNI_TOKEN = os.getenv("UNIREC_TOKEN")
 MOGI_ROLE = os.getenv("MOGI_ROLE")
