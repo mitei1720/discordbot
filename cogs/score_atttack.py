@@ -281,7 +281,12 @@ class SA(commands.Cog):
                 
                 await channel.send(embed = embed)
 
-                await channel.send("スコアタを終了します。お疲れさまでした!!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+                mentionstr = ""
+                for player in mogi.get_players():
+                    mentionstr = mentionstr + guild.get_member(player).mention +" "
+                await channel.send(mentionstr)
+
+                await channel.send("スコアタを終了します。お疲れさまでした!!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n-")
 
                 await channel2.send("提出を締め切ります--------\n-\n-\n-\n-\n-\n-\n-\n-\n-\n-\n")
 

@@ -542,8 +542,12 @@ class Mogi(commands.Cog):
                 for i,player in enumerate(mogi.players):
                     embed.add_field(name=mou.id_to_username(player)+"(MR)",value=str(mrs_before[i])+" -> "+str(mogi.mrs[i]) + "\n delta: "+str(mogi.mrs[i] - mrs_before[i]))
                 
-
+                
                 await channel.send(embed = embed)
+                mentionstr = ""
+                for player in mogi.players:
+                    mentionstr = mentionstr + guild.get_member(player).mention +" "
+                await channel.send(mentionstr)
                 await channel.send("模擬戦を終了します。お疲れさまでした!!")
 
             else:
