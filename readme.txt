@@ -1,3 +1,16 @@
+-1,必要な環境変数
+
+BOT_TOKEN         discord developper portalから持ってきてください
+UNIREC_TOKEN      chunirecのトークンをはっつけてください
+GUILD_ID          動かしたいdiscordのサーバのIDを突っ込んでください
+MOGI_ROLE         discord鯖のロールを適当に作ってIDを突っ込んでください
+
+
++で
+/cogs/mogi.py内グローバル変数に各チャンネルIDをはっつける場所があります。
+
+
+
 0,randombot.py
 bot本体
 起動はpython randombot.py
