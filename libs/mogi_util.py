@@ -12,6 +12,7 @@ from typing import Optional, Union
 
 
 #なぜかわからないけどこれで動く
+#内部にDBをおいてた時の残骸、気にしなくてよい
 DATABASE = "./DB/Randombase.db"
 
 
@@ -85,12 +86,17 @@ def id_to_username(user_id:int) -> Union[str,None]:
 #Debugged
 def init_all() -> int:
     with du.DBwrapper(DATABASE) as db:
-        table_sql = "SELECT name FROM sqlite_master WHERE type = 'table';"
+       
+        #debugged
+        table_sql = "show tables;"
         db.query(table_sql)
         tables = db.cursor.fetchall()
+        print(tables)
+        
+        
         try:
             for table in tables:
-                if(table[0] != "all_music" and table[0] != "sqlite_sequence"):
+                if(table[0] != "all_music"):
                     db.cursor.execute(f"DROP TABLE IF EXISTS {table[0]}")
             db.commit()
         except Exception as e:
@@ -101,145 +107,145 @@ def init_all() -> int:
         sql_r = """
             CREATE TABLE if not exists mogiregister
         (
-            "id" INTEGER,
-            "username" TEXT,
-            "playername" TEXT,
-            "d_id" INTEGER,
-            "register_date" TEXT,
-            "maxrate" REAL,
-            "rate" INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            username TEXT,
+            playername TEXT,
+            d_id BIGINT,
+            register_date TEXT,
+            maxrate REAL,
+            rate INTEGER,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql_r)
         sql = """
             CREATE TABLE if not exists cur_2v2
         (
-            "id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "chan_id" INTEGER,
-            "song1" TEXT,
-            "song2" TEXT,
-            "song3" TEXT,
-            "player_id0" INTEGER,
-            "player_id1" INTEGER,
-            "player_id2" INTEGER,
-            "player_id3" INTEGER,
-            "player_team0" INTEGER,
-            "player_team1" INTEGER,
-            "player_team2" INTEGER,
-            "player_team3" INTEGER,
-            "pl1_score0" INTEGER,
-            "pl1_score1" INTEGER,
-            "pl1_score2" INTEGER,
-            "pl1_score3" INTEGER,
-            "pl2_score0" INTEGER,
-            "pl2_score1" INTEGER,
-            "pl2_score2" INTEGER,
-            "pl2_score3" INTEGER,
-            "pl3_score0" INTEGER,
-            "pl3_score1" INTEGER,
-            "pl3_score2" INTEGER,
-            "pl3_score3" INTEGER,
-            "new_mr0" INTEGER,
-            "new_mr1" INTEGER,
-            "new_mr2" INTEGER,
-            "new_mr3" INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            start TEXT,
+            end TEXT,
+            chan_id BIGINT,
+            song1 TEXT,
+            song2 TEXT,
+            song3 TEXT,
+            player_id0 BIGINT,
+            player_id1 BIGINT,
+            player_id2 BIGINT,
+            player_id3 BIGINT,
+            player_team0 INTEGER,
+            player_team1 INTEGER,
+            player_team2 INTEGER,
+            player_team3 INTEGER,
+            pl1_score0 INTEGER,
+            pl1_score1 INTEGER,
+            pl1_score2 INTEGER,
+            pl1_score3 INTEGER,
+            pl2_score0 INTEGER,
+            pl2_score1 INTEGER,
+            pl2_score2 INTEGER,
+            pl2_score3 INTEGER,
+            pl3_score0 INTEGER,
+            pl3_score1 INTEGER,
+            pl3_score2 INTEGER,
+            pl3_score3 INTEGER,
+            new_mr0 INTEGER,
+            new_mr1 INTEGER,
+            new_mr2 INTEGER,
+            new_mr3 INTEGER,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql)
         sql1 = """
             CREATE TABLE if not exists all_2v2
         (
-            "id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "song1" TEXT,
-            "song2" TEXT,
-            "song3" TEXT,
-            "player_id0" INTEGER,
-            "player_id1" INTEGER,
-            "player_id2" INTEGER,
-            "player_id3" INTEGER,
-            "player_team0" INTEGER,
-            "player_team1" INTEGER,
-            "player_team2" INTEGER,
-            "player_team3" INTEGER,
-            "pl1_score0" INTEGER,
-            "pl1_score1" INTEGER,
-            "pl1_score2" INTEGER,
-            "pl1_score3" INTEGER,
-            "pl2_score0" INTEGER,
-            "pl2_score1" INTEGER,
-            "pl2_score2" INTEGER,
-            "pl2_score3" INTEGER,
-            "pl3_score0" INTEGER,
-            "pl3_score1" INTEGER,
-            "pl3_score2" INTEGER,
-            "pl3_score3" INTEGER,
-            "new_mr0" INTEGER,
-            "new_mr1" INTEGER,
-            "new_mr2" INTEGER,
-            "new_mr3" INTEGER,
-            "season" INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            start TEXT,
+            end TEXT,
+            song1 TEXT,
+            song2 TEXT,
+            song3 TEXT,
+            player_id0 BIGINT,
+            player_id1 BIGINT,
+            player_id2 BIGINT,
+            player_id3 BIGINT,
+            player_team0 INTEGER,
+            player_team1 INTEGER,
+            player_team2 INTEGER,
+            player_team3 INTEGER,
+            pl1_score0 INTEGER,
+            pl1_score1 INTEGER,
+            pl1_score2 INTEGER,
+            pl1_score3 INTEGER,
+            pl2_score0 INTEGER,
+            pl2_score1 INTEGER,
+            pl2_score2 INTEGER,
+            pl2_score3 INTEGER,
+            pl3_score0 INTEGER,
+            pl3_score1 INTEGER,
+            pl3_score2 INTEGER,
+            pl3_score3 INTEGER,
+            new_mr0 INTEGER,
+            new_mr1 INTEGER,
+            new_mr2 INTEGER,
+            new_mr3 INTEGER,
+            season INTEGER,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql1)
         sql2 = """
             CREATE TABLE if not exists all_sa
         (
-            "id" INTEGER,
-            "ev_id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "p_amount" INTEGER,
-            "p_rank" INTEGER,
-            "player_id" INTEGER,
-            "score" INTEGER,
-            "player_maxrate" REAL,
-            "player_mr" INTEGER,
-            "new_mr" INTEGER,
-            "assign" TEXT,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            ev_id INTEGER,
+            start TEXT,
+            end TEXT,
+            p_amount INTEGER,
+            p_rank INTEGER,
+            player_id BIGINT,
+            score INTEGER,
+            player_maxrate REAL,
+            player_mr INTEGER,
+            new_mr INTEGER,
+            assign TEXT,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql2)
         sql3 = """
             CREATE TABLE if not exists sa_info
         (
-            "ev_id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "chan_id" INTEGER,
-            "h_song1" TEXT,
-            "h_song2" TEXT,
-            "l_song1" TEXT,
-            "l_song2" TEXT,
-            "p_amount" INTEGER,
-            "ph_amount" INTEGER,
-            "pl_amount" INTEGER,
-            PRIMARY KEY("ev_id" AUTOINCREMENT)
+            ev_id INTEGER AUTO_INCREMENT,
+            start TEXT,
+            end TEXT,
+            chan_id BIGINT,
+            h_song1 TEXT,
+            h_song2 TEXT,
+            l_song1 TEXT,
+            l_song2 TEXT,
+            p_amount INTEGER,
+            ph_amount INTEGER,
+            pl_amount INTEGER,
+            PRIMARY KEY(ev_id)
         );
             """
         db.query(sql3)
         sql4 = """
             CREATE TABLE if not exists sa_cur
         (
-            "id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "chan_id" INTEGER,
-            "h_song1" TEXT,
-            "h_song2" TEXT,
-            "l_song1" TEXT,
-            "l_song2" TEXT,
-            "p_amount" INTEGER,
-            "ph_amount" INTEGER,
-            "pl_amount" INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            start TEXT,
+            end TEXT,
+            chan_id BIGINT,
+            h_song1 TEXT,
+            h_song2 TEXT,
+            l_song1 TEXT,
+            l_song2 TEXT,
+            p_amount INTEGER,
+            ph_amount INTEGER,
+            pl_amount INTEGER,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql4)
@@ -262,38 +268,38 @@ def init_season()->int:
         sql = """
             CREATE TABLE if not exists cur_2v2
         (
-            "id" INTEGER,
-            "start" TEXT,
-            "end" TEXT,
-            "chan_id" INTEGER,
-            "song1" TEXT,
-            "song2" TEXT,
-            "song3" TEXT,
-            "player_id0" INTEGER,
-            "player_id1" INTEGER,
-            "player_id2" INTEGER,
-            "player_id3" INTEGER,
-            "player_team0" INTEGER,
-            "player_team1" INTEGER,
-            "player_team2" INTEGER,
-            "player_team3" INTEGER,
-            "pl1_score0" INTEGER,
-            "pl1_score1" INTEGER,
-            "pl1_score2" INTEGER,
-            "pl1_score3" INTEGER,
-            "pl2_score0" INTEGER,
-            "pl2_score1" INTEGER,
-            "pl2_score2" INTEGER,
-            "pl2_score3" INTEGER,
-            "pl3_score0" INTEGER,
-            "pl3_score1" INTEGER,
-            "pl3_score2" INTEGER,
-            "pl3_score3" INTEGER,
-            "new_mr0" INTEGER,
-            "new_mr1" INTEGER,
-            "new_mr2" INTEGER,
-            "new_mr3" INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT)
+            id INTEGER AUTO_INCREMENT,
+            start TEXT,
+            end TEXT,
+            chan_id BIGINT,
+            song1 TEXT,
+            song2 TEXT,
+            song3 TEXT,
+            player_id0 BIGINT,
+            player_id1 BIGINT,
+            player_id2 BIGINT,
+            player_id3 BIGINT,
+            player_team0 INTEGER,
+            player_team1 INTEGER,
+            player_team2 INTEGER,
+            player_team3 INTEGER,
+            pl1_score0 INTEGER,
+            pl1_score1 INTEGER,
+            pl1_score2 INTEGER,
+            pl1_score3 INTEGER,
+            pl2_score0 INTEGER,
+            pl2_score1 INTEGER,
+            pl2_score2 INTEGER,
+            pl2_score3 INTEGER,
+            pl3_score0 INTEGER,
+            pl3_score1 INTEGER,
+            pl3_score2 INTEGER,
+            pl3_score3 INTEGER,
+            new_mr0 INTEGER,
+            new_mr1 INTEGER,
+            new_mr2 INTEGER,
+            new_mr3 INTEGER,
+            PRIMARY KEY(id)
         );
             """
         db.query(sql)
@@ -363,12 +369,13 @@ def player_register(username:str,user_id:discord.User.id,maxrate:float) -> Tuple
                 db.commit()
 
                 #player historyの作成
-                sql = f" CREATE TABLE if not exists Player_{user_id}_history ('id' INTEGER,'end' TEXT,'kind' TEXT,'ev_id' INTEGER, 'new_mr' INTEGER ,PRIMARY KEY('id' AUTOINCREMENT));"
+                sql = f" CREATE TABLE if not exists Player_{user_id}_history (id INTEGER AUTO_INCREMENT, end TEXT,kind TEXT,ev_id INTEGER, new_mr INTEGER ,PRIMARY KEY(id));"
                 db.query(sql)
                 db.commit()
                 return True, initrate
         
             except Exception as e:
+                print(e)
                 db.rollback()
                 print("mogi_register------rollback")
                 return False,0

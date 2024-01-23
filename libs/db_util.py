@@ -1,7 +1,11 @@
-import sqlite3
+import MySQLdb
 import pandas as pd
 import os
 from functools import wraps
+from sqlalchemy import create_engine
+from sqlalchemy.types import Float,Integer,String,Text,BigInteger
+import settings
+
 
 
 #データベースのtable名
@@ -122,17 +126,26 @@ from functools import wraps
 
 
 
+#filePath ->内部にDBをおいてた時の残骸。気にしなくてよい。（外部DBにしてから使っていない）
 
 class DB:
     def __init__(self, filePath=None):
         if filePath != None:
             self.filePath = filePath
+            self.dbname = settings.SQL_DBNM
 
     def open(self, filePath=None):
         if filePath != None:
             self.filePath = filePath
             print("Successfully connect to"+filePath)            
-        self.connection = sqlite3.connect(self.filePath)
+        self.connection = MySQLdb.connect(
+            host=settings.SQL_HOST,
+            user=settings.SQL_USER,
+            port=settings.SQL_PORT,
+            passwd=settings.SQL_PASS,
+            db=settings.SQL_DBNM,
+            charset='utf8'
+        )
         self.cursor = self.connection.cursor()
 
     def close(self):
@@ -140,11 +153,17 @@ class DB:
         self.connection.close()
 
     def fetch(self, sql):
-        for row in self.cursor.execute(sql):
+        self.cursor.execute(sql)
+        for row in self.cursor:
             yield row
 
     def query(self, sql):
         self.cursor.execute(sql)
+
+    def execute_query(self,sql):
+        self.cursor.execute(sql)
+        res = self.cursor.fetchall()
+        return res
 
     def commit(self):
         self.connection.commit()
@@ -164,6 +183,13 @@ class DB:
 
 class DBwrapper(DB):
 
+    GET_TABLE_LIST_QUERY = "SELECT table_name,type FROM (SELECT table_name,table_schema,CASE table_type WHEN 'VIEW' THEN 'view' ELSE 'table' END AS type FROM information_schema.tables) t WHERE table_name LIKE '{0}' AND table_schema LIKE '{1}' AND type like '{2}'"
+    GET_COLUMN_LIST_QUERY = "SELECT TABLE_NAME,COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME like LOWER('{0}') and TABLE_SCHEMA like LOWER('{1}') ORDER BY ORDINAL_POSITION"
+    GET_ALTER_TABLE_QUERY = "ALTER TABLE {0} ADD {1}"
+    GET_RENAME_TABLE_QUERY = "RENAME TABLE {0} TO {1}"
+
+
+    #debugged
     def set(self, tablename, args={}):
         """
         DBに値をセットする関数argsには入れる内容を辞書型で記入
@@ -185,14 +211,80 @@ class DBwrapper(DB):
         sql = f"replace into {tablename} ({columns}) values ({values})"
         self.query(sql)
         return True,
-    
+
+
+    #danger  
+    #to_sqlを使いたいのにエラーを吐くのでこの実装
     def set_from_pd(self, unidata:pd.DataFrame,tablename:str="all_music") -> None:
         """
         dfからDBにデータ移行
         """
-        unidata.to_sql(tablename,self.connection,if_exists="replace",index=False)
-                
+        self.query("DROP TABLE IF EXISTS all_music")
+        self.commit()
+        sql = """
+            CREATE TABLE if not exists all_music(
+                id INTEGER AUTO_INCREMENT,
+                meta_id TEXT,
+                meta_title TEXT,
+                meta_genre TEXT,
+                meta_artist TEXT,
+                meta_release TEXT,
+                meta_bpm INTEGER,
+                level REAL,
+                const REAL,
+                maxcombo REAL,
+                is_const_unknown REAL,
+                diff TEXT,
+                PRIMARY KEY(id)
+            )
+        """
+        self.query(sql)
+        self.commit()
+
+        #try:
+        #    ind = 0
+        #    for row in unidata.itertuples():
+        #        dat = {
+        #            "meta_id":          row.meta_id,
+        #            "meta_title":       row.meta_title.replace("'","’"),
+        #            "meta_genre":       row.meta_genre,
+        #            "meta_artist":      row.meta_artist.replace("'","’"),
+        #            "meta_release":     row.meta_release,
+        #            "meta_bpm":         row.meta_bpm,
+        #            "level":            row.level,
+        #            "const":            row.const,
+        #            "maxcombo":         row.maxcombo,
+        #            "is_const_unknown": row.is_const_unknown,
+        #            "diff":             row.diff
+        #        }
+        #        self.set("all_music",dat)
+        #        if(ind == 20):
+        #            break
+        #        ind += 1
+#
+        #    
+        #    self.commit()
+        #except Exception as e:
+        #    print("----------------rollback------------------\n")
+        #    print("song_import")
+        #    print(e)
+        #    self.rollback()
+        engine = create_engine(settings.SQL_URL)
+        unidata.to_sql(tablename,con=engine,if_exists="append",index=False)
+        #dtype={'meta_id': Text,
+        #                                                                           "meta_title":Text,
+        #                                                                           "meta_genre":Text,
+        #                                                                           "meta_artist":Text,
+        #                                                                           "meta_release":Text,
+        #                                                                           "meta_bpm":Integer,
+        #                                                                           "level":Float,
+        #                                                                           "const":Float,
+        #                                                                           "maxcombo":Float,
+        #                                                                           "is_const_unknown":Float,
+        #                                                                           "diff":Text}
+        #        
     
+
     def get(self, tablename, args={}):
         """
         DBからデータを引っこ抜く.argsには抽出したい条件を辞書で記入
@@ -220,7 +312,7 @@ class DBwrapper(DB):
         self.cursor.execute(f"DROP TABLE IF EXISTS {tablename};")
 
     def get_all_table(self):
-        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        self.cursor.execute("show tables")
         # 結果を取得
         tables = self.cursor.fetchall()
         # テーブルの一覧を表示
@@ -229,7 +321,7 @@ class DBwrapper(DB):
             tlist.append(table[0])
         return tlist
 
-
+    #danger
     def get_latest_id(self, tablename:str = None, id_column_name:str = None) -> int:
         
         sql = f"select max({id_column_name}) from {tablename}"
@@ -247,11 +339,27 @@ class DBwrapper(DB):
         row = self.fetch(sql)
         return row.__next__()[0]
 
-    def _getColumns(self, tablename):
-        sql = f"pragma table_info('{tablename}')"
-        columns = {x[1]: x[2] for x in self.fetch(sql)}
-        return columns
+    
 
+    
+    def _getColumns(self,tablename):
+        '''
+        指定したテーブルのカラムと型を一覧で取得する
+        Parameters
+        ----------
+        tablename : str
+            テーブル名
+        Returns
+        ----------
+        res:str
+            リスト形式でカラム名と型のタプルを返す
+            <例>  [('column1','int'),('column2','text'),('column3',real)]
+        '''
+        res = self.execute_query(self.GET_COLUMN_LIST_QUERY.format(tablename,self.dbname))
+        return {name[1]:name[2] for name in res}
+
+
+    #debugged
     def _keyValue(self, args={}) -> str:
         keys = list(args.keys())
         wh = []
@@ -286,3 +394,7 @@ class DBwrapper(DB):
         return wh
 
 
+
+
+
+    

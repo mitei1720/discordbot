@@ -83,31 +83,33 @@ class CRandom(commands.Cog):
         #usernameがあっているか、mogiに問い合わせる
 
         #一曲引き抜いてくる
+        await interaction.response.defer()
         mdata,errtxt = mu.randompick(genre=genre,level=level,level_from=level_from,level_to=level_to,diff=diff)
 
 
         if username is None:
             if errtxt is not None:
-                await interaction.response.send_message(errtxt)
+                await interaction.followup.send(errtxt)
             else:
                 #成功処理
                 embed = mdata.make_embed()
-                await interaction.response.send_message(embed = embed)
+                await interaction.followup.send(embed = embed)
         else:
             if errtxt is not None:
-                await interaction.response.send_message(errtxt)
+                await interaction.followup.send(errtxt)
             else:
                 #成功処理
                 mdata.add_goals(username)
                 embed = mdata.make_embed()
-                await interaction.response.send_message(embed = embed)
+                await interaction.followup.send(embed = embed)
 
     @app_commands.command()
     @app_commands.default_permissions(administrator=True)
     async def song_import(self, interaction:discord.Interaction):
         """[admin専用コマンド]song_dataを更新。ウニのアプデの日に使ってください"""
+        await interaction.response.defer()
         mu.import_music_data()
-        await interaction.response.send_message("Successfully updated!!")
+        await interaction.followup.send("Successfully updated!!")
     
         
 

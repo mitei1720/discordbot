@@ -136,6 +136,9 @@ def import_music_data(version: str = "jp2") -> None:
 
         #テーブル統合
         tbl_all = pd.concat([tbl_bas, tbl_adv, tbl_exp, tbl_mas, tbl_ult],axis=0,ignore_index=True)
+        #tbl_all["meta_title"] = tbl_all["meta_title"].str.replace("'","’")
+        #tbl_all["meta_artist"] = tbl_all["meta_artist"].str.replace("'","’")
+
 
         
         #統合テーブルをデータベース化

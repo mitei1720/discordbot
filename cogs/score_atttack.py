@@ -80,13 +80,14 @@ class SA(commands.Cog):
         """
         [admin専用]ルールに違反したプレイヤーのスコアを0にロックするコマンド
         """
+        await interaction.response.defer()
         with su.MogiSA(SA_INFO) as mogi:
             mogi.register_score(member.id,"l",0)
             mogi.register_score(member.id,"h",0)
 
         SA_LOCKED.append(member.id)
 
-        await interaction.response.send_message("Successfully locked  " + member.name)
+        await interaction.followup.send("Successfully locked  " + member.name)
         
 
         

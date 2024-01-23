@@ -41,7 +41,7 @@ class MyBot(commands.Bot):
     async def on_ready(self):
         print(f'Logged in as {bot.user} (ID: {bot.user.id})')
         print('------')
-        await bot.change_presence(activity=discord.CustomActivity(name="本日も精神誠意、股濡れ中", type=1))
+        await bot.change_presence(activity=discord.CustomActivity(name="本日も誠心誠意、股濡れ中", type=1))
         return
 
 

@@ -51,6 +51,7 @@ class Mogi(commands.Cog):
         #上を使う場合はawait interaction.followup.send(message, ephemeral=hidden) (返り値webhook注意)
 
         #登録
+        
         if username is None:
             await interaction.response.send_message("usernameを入力してください",ephemeral=True)
             return
@@ -64,6 +65,7 @@ class Mogi(commands.Cog):
             return
 
 
+        await interaction.response.defer()
         suc,rate = mou.player_register(username,interaction.user.id,maxrate)
 
         if suc is True:
@@ -78,10 +80,10 @@ class Mogi(commands.Cog):
         
 
             #成功と初期レートを知らせる
-            await interaction.response.send_message("Successfully registerd as["+username+"].\n"+username+"の初期股濡レートは["+str(rate)+"]です。" )
+            await interaction.followup.send("Successfully registerd as["+username+"].\n"+username+"の初期股濡レートは["+str(rate)+"]です。" )
         else:
             #失敗した場合はエラーを通告
-            await interaction.response.send_message("[Error] Try again.",ephemeral=True)
+            await interaction.followup.send("[Error] Try again.",ephemeral=True)
 
    
 
@@ -103,11 +105,12 @@ class Mogi(commands.Cog):
             #エラー
             await interaction.response.send_message("変更要素がありません.")
         else:
+            await interaction.response.defer()
             #変更
             if mou.fix_player(username,interaction.user.id,maxrate):
-                await interaction.response.send_message("Successfully fixed.")
+                await interaction.followup.send("Successfully fixed.")
             else:
-                await interaction.response.send_message("[Error] Try again.",ephemeral=True)
+                await interaction.followup.send("[Error] Try again.",ephemeral=True)
 
     
 
@@ -152,8 +155,9 @@ class Mogi(commands.Cog):
         """
         [admin専用コマンド]mogiの全情報リセット
         """
+        await interaction.response.defer()
         season = mou.init_all()
-        await interaction.response.send_message("[mogiregister][mogi_2v2] initialized.\nシーズン"+str(season)+"が始まりました")
+        await interaction.followup.send("[mogiregister][mogi_2v2] initialized.\nシーズン"+str(season)+"が始まりました")
         
 
     #Debugged
@@ -164,8 +168,9 @@ class Mogi(commands.Cog):
         """
         [admin専用コマンド]mogiの新シーズンを開始
         """
+        await interaction.response.defer()
         season = mou.init_season()
-        await interaction.response.send_message("シーズン"+str(season)+"が始まりました。")
+        await interaction.followup.send("シーズン"+str(season)+"が始まりました。")
 
 
     #debugged
@@ -187,12 +192,13 @@ class Mogi(commands.Cog):
         """
         このスレッドで2v2模擬を始める
         """
+        await interaction.response.defer()
         if mou.is_on_mogi(interaction.channel_id):
-            await interaction.response.send_message("このチャンネルは既に模擬戦を開催中です。")
+            await interaction.followup.send("このチャンネルは既に模擬戦を開催中です。")
         
         else:
             with mou.Mogi2v2(interaction.channel_id) as mogi:
-                await interaction.response.send_message("2v2模擬戦を開催します。\n この模擬は"+mogi.enddate+"に終了します\n /cを押して参加してください。現在0/4人")
+                await interaction.followup.send("2v2模擬戦を開催します。\n この模擬は"+mogi.enddate+"に終了します\n /cを押して参加してください。現在0/4人")
 
 
 
@@ -207,19 +213,20 @@ class Mogi(commands.Cog):
         ###TO_DO
         ##########同じプレイヤーが2人以上参加しないようにはじく###########
 
+        await interaction.response.defer()
         if not mou.is_on_mogi(interaction.channel_id):
-            await interaction.response.send_message("模擬が開催されていません。/startコマンドで開催を宣言してください")
+            await interaction.followup.send("模擬が開催されていません。/startコマンドで開催を宣言してください")
 
         elif mou.id_to_username(interaction.user.id) is None:
-            await interaction.response.send_message("mogiregisterで登録を済ませてください")
+            await interaction.followup.send("mogiregisterで登録を済ませてください")
         
 
         else:
             with mou.Mogi2v2(interaction.channel_id) as mogi:
                 if interaction.user.id in mogi.players:
-                    await interaction.response.send_message("すでに参加しています")
+                    await interaction.followup.send("すでに参加しています")
                 elif mogi.player_add(interaction.user):
-                    await interaction.response.send_message(mou.id_to_username(interaction.user.id)+" さんが参加\n現在"+str(mogi.n_player)+"/4人")
+                    await interaction.followup.send(mou.id_to_username(interaction.user.id)+" さんが参加\n現在"+str(mogi.n_player)+"/4人")
                     
 
                     #respondを使わないように書き換える -> 変えた
@@ -252,7 +259,7 @@ class Mogi(commands.Cog):
                             await channel.send("まずはチーム1の方お願いします。")
 
                 else:
-                    await interaction.response.send_message("満員です。次の模擬をお待ちください")
+                    await interaction.followup.send("満員です。次の模擬をお待ちください")
 
     #debugged
     @app_commands.command()
@@ -261,8 +268,9 @@ class Mogi(commands.Cog):
         """
         mogiの課題曲,playerリストを表示するコマンド
         """
+        await interaction.response.defer()
         if not mou.is_on_mogi(interaction.channel_id):
-            await interaction.response.send_message("模擬が開催されていません。")
+            await interaction.followup.send("模擬が開催されていません。")
         else:
             with mou.Mogi2v2(interaction.channel_id) as mogi:
                 channel = self.bot.get_channel(interaction.channel_id)
@@ -278,7 +286,7 @@ class Mogi(commands.Cog):
                     if teams[i] == 2:
                         printstr = printstr + usernamelist[i]+"\t (MR:"+str(mrs[i])+")\n"
 
-                await interaction.response.send_message(printstr)
+                await interaction.followup.send(printstr)
 
                 n_song,songs= mogi.get_songs()
                 embed = discord.Embed(
@@ -299,15 +307,16 @@ class Mogi(commands.Cog):
         """
         [admin専用コマンド]模擬を強制的に中断します。
         """
+        await interaction.response.defer()
         if not mou.is_on_mogi(interaction.channel_id):
-            await interaction.response.send_message("模擬が開催されていません。")
+            await interaction.followup.send("模擬が開催されていません。")
         
         else:
             with mou.Mogi2v2(interaction.channel_id) as mogi:
                 if mogi.cancel_mogi():
-                    await interaction.response.send_message("Successfully cancelled")
+                    await interaction.followup.send("Successfully cancelled")
                 else:
-                    await interaction.response.send_message("[Error]Bot Staffを呼んでください")
+                    await interaction.followup.send("[Error]Bot Staffを呼んでください")
 
 
 
@@ -347,6 +356,7 @@ class Mogi(commands.Cog):
         levelはlevel_to,fromより優先される
         """
         #模擬があるかチェック
+        await interaction.response.defer()
         if mou.is_on_mogi(interaction.channel_id):
             with mou.Mogi2v2(interaction.channel_id) as mogi:
                 #模擬参加者かチェック
@@ -356,7 +366,7 @@ class Mogi(commands.Cog):
                         #課題曲が既に登録済みかをチェック
                         if mogi.songs[0] == "_":
                             #課題決定処理
-                            await interaction.response.send_message("...")
+                            await interaction.followup.send("...")
                             channel = self.bot.get_channel(interaction.channel_id)
                             slist, mes =  mu.searchpick(title,genre,level,level_from,level_to,diff)
                             if(slist is None):
@@ -383,15 +393,15 @@ class Mogi(commands.Cog):
                                 await channel.send(mentionstr)
 
                         else:
-                            await interaction.response.send_message("チーム1選出の課題曲は決定済みです\n\n")
+                            await interaction.followup.send("チーム1選出の課題曲は決定済みです\n\n")
                     else:
                         #課題曲が既に登録済みかをチェック
                         if mogi.songs[1] == "_":
                             if mogi.songs[0] == "_":
-                                await interaction.response.send_message("チーム1選出の課題曲が決定されるまでお待ちください\n\n")
+                                await interaction.followup.send("チーム1選出の課題曲が決定されるまでお待ちください\n\n")
                             else:
                                 #課題決定処理
-                                await interaction.response.send_message("...")
+                                await interaction.followup.send("...")
                                 channel = self.bot.get_channel(interaction.channel_id)
                                 slist, mes =  mu.searchpick(title,genre,level,level_from,level_to,diff)
                                 if(slist is None):
@@ -432,13 +442,13 @@ class Mogi(commands.Cog):
                                         await channel.send(embed = embed)
 
                         else:
-                            await interaction.response.send_message("チーム2選出の課題曲は決定済みです\n\n")
+                            await interaction.followup.send("チーム2選出の課題曲は決定済みです\n\n")
                 
                 else:
-                    await interaction.response.send_message("あなたは模擬参加者ではありません")
+                    await interaction.followup.send("あなたは模擬参加者ではありません")
         
         else:
-            await interaction.response.send_message("模擬が開催されていません")
+            await interaction.followup.send("模擬が開催されていません")
 
 
     #debugged
