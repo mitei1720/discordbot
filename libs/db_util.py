@@ -1,4 +1,4 @@
-import MySQLdb
+import pymysql
 import pandas as pd
 import os
 from functools import wraps
@@ -138,7 +138,7 @@ class DB:
         if filePath != None:
             self.filePath = filePath
             print("Successfully connect to"+filePath)            
-        self.connection = MySQLdb.connect(
+        self.connection = pymysql.connect(
             host=settings.SQL_HOST,
             user=settings.SQL_USER,
             port=settings.SQL_PORT,
