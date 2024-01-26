@@ -117,7 +117,8 @@ class SA(commands.Cog):
             await interaction.response.defer()
             #変更
             if mou.fix_player(username,interaction.user.id,maxrate):
-                await interaction.followup.send("Successfully fixed.")
+                name = mou.id_to_username(interaction.user.id)
+                await interaction.followup.send("Successfully fixed. -> ["+name+"]")
             else:
                 await interaction.followup.send("[Error] Try again.",ephemeral=True)
 
@@ -425,10 +426,11 @@ class SA(commands.Cog):
                 embed = discord.Embed(title="結果発表[l]")
                 for row in lrank.itertuples():
                     player = guild.get_member(row.player_id)
-                    if mou.id_to_username(row.player_id) is None :
-                        embed.add_field(name=str(int(row.p_rank))+"位 " + player.name+"(" +player.mention+")", value="score:"+str(row.score),inline=False)
+                    pname = mou.id_to_username(row.player_id)
+                    if pname is None :
+                        embed.add_field(name=str(int(row.p_rank))+"位 " +"ゲスト"+"(" +player.name+")", value="score:"+str(row.score),inline=False)
                     else:
-                        embed.add_field(name=str(int(row.p_rank))+"位 " + player.name+"(" +player.mention+")", value="score:"+str(row.score)+"\n"
+                        embed.add_field(name=str(int(row.p_rank))+"位 " + pname+"(" +player.name+")", value="score:"+str(row.score)+"\n"
                                         +"MR:"+str(row.player_mr)+"->"+str(row.new_mr)+"(Delta:"+str(row.new_mr - row.player_mr)+")",inline=False)
                 
                 await channel.send(embed = embed)
