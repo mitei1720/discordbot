@@ -158,7 +158,7 @@ class Mogi(commands.Cog):
     #debugged
     @app_commands.command()
     @app_commands.check(is_mogichan)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def end(self, interaction:discord.Interaction):
         """
         [admin専用コマンド]模擬を強制的に中断します。

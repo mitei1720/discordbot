@@ -26,3 +26,5 @@ SQL_USER = os.getenv("SQL_USER")
 SQL_PORT = int(os.getenv("SQL_PORT"))
 SQL_PASS = os.getenv("SQL_PASS")
 SQL_DBNM = os.getenv("SQL_DBNM")
+ADMIN_ROLE = os.getenv("ADMIN_ROLE")
+

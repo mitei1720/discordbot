@@ -128,7 +128,7 @@ class SA(commands.Cog):
     @app_commands.command()
     @app_commands.check(is_regichan)
     #@app_commands.checks.has_any_role(1054345096620945408, 1054345230389882980)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def mute_player(self, interaction:discord.Interaction,member:Optional[discord.Member] = None):
         """
         [admin専用コマンド]mogi_playerロールの剥奪
@@ -143,7 +143,7 @@ class SA(commands.Cog):
     #Debugged
     @app_commands.command()
     @app_commands.check(is_regichan)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def activate_player(self, interaction:discord.Interaction,member:Optional[discord.Member] = None):
         """
         [admin専用コマンド]mogi_playerロールの復帰
@@ -157,39 +157,11 @@ class SA(commands.Cog):
 
     
 
-    #Debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    @app_commands.default_permissions(administrator=True)
-    async def init_all_mogi(self, interaction:discord.Interaction):
-        """
-        [admin専用コマンド]mogiの全情報リセット
-        """
-        await interaction.response.defer()
-        season = mou.init_all()
-        await interaction.followup.send("[mogiregister][mogi_2v2] initialized.\nシーズン"+str(season)+"が始まりました")
-        
-
-    #Debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    @app_commands.default_permissions(administrator=True)
-    async def init_mogi_season(self, interaction:discord.Interaction):
-        """
-        [admin専用コマンド]mogiの新シーズンを開始
-        """
-        await interaction.response.defer()
-        season = mou.init_season()
-        await interaction.followup.send("シーズン"+str(season)+"が始まりました。")
-
-
     #debugged
     @register.error
     @fix_rate.error
     @mute_player.error
     @activate_player.error
-    @init_all_mogi.error
-    @init_mogi_season.error
     async def chan_error(self, interaction, error):
         if isinstance(error, discord.app_commands.errors.CheckFailure):
             await interaction.response.send_message("このチャンネルでは使用できません",ephemeral=True)
@@ -199,7 +171,7 @@ class SA(commands.Cog):
     
     @app_commands.command()
     @app_commands.check(is_sachan)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def schedule(self, interaction:discord.Interaction):
         """
         [admin専用]一週間に1回のスコアアタックを開始するコマンド
@@ -211,7 +183,7 @@ class SA(commands.Cog):
 
     @app_commands.command()
     @app_commands.check(is_sachan)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def end_schedule(self, interaction:discord.Interaction):
         """
         [admin専用]一週間に1回のスコアアタックを中止するコマンド
@@ -227,7 +199,7 @@ class SA(commands.Cog):
 
     @app_commands.command()
     @app_commands.check(is_sachan)
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def lock(self, interaction:discord.Interaction,member:Optional[discord.Member]):
         """
         [admin専用]ルールに違反したプレイヤーのスコアを0にロックするコマンド
@@ -268,48 +240,67 @@ class SA(commands.Cog):
         tlist = tmpmes.split()
         channel = self.bot.get_channel(message.channel.id)
 
-        if not (message.channel.id) in [SA_CHANNEL]:
-            return
-        
-        if message.author.id in SA_LOCKED:
-            await channel.send("あなたは提出をロックされています")
-            return 
-
-
-
-        #submit関数の定義---------------
-        if  tlist[0] == "!submit":
-            if len(tlist) != 3:
-                await channel.send("!submit [課題記号(l or h)] [スコア]\nとして送信してください")
-                return
-
-            if not(tlist[1] == "l" or tlist[1] == "h"):
-                await channel.send("!submitの次の文字は課題曲記号です。存在しない記号を入力してます\n lかhのいずれかを入力してください")
-                return
+        if message.channel.id in [SA_CHANNEL]:
+            if message.author.id in SA_LOCKED:
+                await channel.send("あなたは提出をロックされています")
+                return 
             
-            if int(tlist[2]) < 0 or int(tlist[2]) > 1010000:
-                await channel.send("存在しないスコアを記入しています")
-                return
-            
-            #処理を書く-----------------------------------
-
-            with su.MogiSA(SA_INFO) as mogi:
-                if mogi.is_in_sa(message.author.id):
-                    if mogi.register_score(message.author.id,tlist[1],int(tlist[2])):
-                        await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+            #submit関数の定義---------------
+            if  tlist[0] == "!submit":
+                if len(tlist) != 3:
+                    await channel.send("!submit [課題記号(l or h)] [スコア]\nとして送信してください")
+                    return
+    
+                if not(tlist[1] == "l" or tlist[1] == "h"):
+                    await channel.send("!submitの次の文字は課題曲記号です。存在しない記号を入力してます\n lかhのいずれかを入力してください")
+                    return
+                
+                if int(tlist[2]) < 0 or int(tlist[2]) > 1010000:
+                    await channel.send("存在しないスコアを記入しています")
+                    return
+                
+                #処理を書く-----------------------------------
+    
+                with su.MogiSA(SA_INFO) as mogi:
+                    if mogi.is_in_sa(message.author.id):
+                        if mogi.register_score(message.author.id,tlist[1],int(tlist[2])):
+                            await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+                        else:
+                            await channel.send("提出種別を確認してください")
+                        
                     else:
-                        await channel.send("提出種別を確認してください")
-                    
-                else:
-                    mogi.add_player(message.author.id)
-                    if mogi.register_score(message.author.id,tlist[1],int(tlist[2])):
-                        await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+                        mogi.add_player(message.author.id)
+                        if mogi.register_score(message.author.id,tlist[1],int(tlist[2])):
+                            await message.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+    
+                        else:
+                            await channel.send("提出種別を確認してください")
+    
 
-                    else:
-                        await channel.send("提出種別を確認してください")
+        elif message.channel.id in [MOGI_REGI_CHANNEL]:
+            if  tlist[0] == "!init_all_mogi":
+                guild = self.bot.get_guild(int(settings.GUILD_ID))
+                member = guild.get_member(message.author.id)
+                adminrole = guild.get_role(int(settings.ADMIN_ROLE))
 
-        else:
-            return
+                if adminrole in member.roles:
+                    season = mou.init_all()
+                    await channel.send("[mogiregister][mogi_2v2] initialized.\nシーズン"+str(season)+"が始まりました")
+
+            elif tlist[0] == "!init_mogi_season":
+                guild = self.bot.get_guild(int(settings.GUILD_ID))
+                member = guild.get_member(message.author.id)
+                adminrole = guild.get_role(int(settings.ADMIN_ROLE))
+
+                if adminrole in member.roles:
+                    season = mou.init_season()
+                    await channel.send("シーズン"+str(season)+"が始まりました。")
+
+
+
+
+     
+
 
     #debugged
     @tasks.loop(minutes = 1)
@@ -361,8 +352,23 @@ class SA(commands.Cog):
                 await channel2.send("ただいまより提出を開始します----------\n写真を載せた後、!submit [課題種別] [スコア]として送信してください\n例: !submit h 1010000")
 
                 #曲決め
-                hl = [14.9,15.0,15.1]
-                ll = [13.9,14.0,14.1,14.2,14.3,14.4,14.5,14.6]
+                hl = [14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,
+                      15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,
+                      15.1,15.1,15.1,15.1,15.1,
+                      15.2,
+                      15.3,
+                      15.4
+                      ]
+                ll = [13.9,
+                      14.0,14.0,
+                      14.1,14.1,14.1,14.1,
+                      14.2,14.2,14.2,14.2,14.2,14.2,
+                      14.3,14.3,14.3,14.3,14.3,14.3,
+                      14.4,14.4,14.4,14.4,
+                      14.5,14.5,
+                      14.6
+                      ]
+                
 
                 hlev = random.choice(hl)
                 llev = random.choice(ll)
