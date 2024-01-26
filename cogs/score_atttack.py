@@ -108,6 +108,9 @@ class SA(commands.Cog):
         #上を使わない場合はawait interaction.response.send_messageで返す
         #上を使う場合はawait interaction.followup.send(message, ephemeral=hidden) (返り値webhook注意)
 
+        if username is not None and not (username.isalnum()):
+            await interaction.response.send_message("usernameに記号を含めないでください",ephemeral=True)
+            return
         
 
         if username is None and maxrate is None:
