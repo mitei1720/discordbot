@@ -278,7 +278,7 @@ class MogiSA(du.DBwrapper):
             for prow in prows:
                 tmprate = prow["rate"]
             
-            if tmprate < 15000:
+            if tmprate < 16000:
                 if assign == "h":
                     return False
 
@@ -292,15 +292,8 @@ class MogiSA(du.DBwrapper):
                 else:
                     return False
 
-            elif tmprate < 16500:
-                self.stable.at[self.stable[self.stable['player_id'] == d_id].index[0],"score"] = score
-                self.stable.at[self.stable[self.stable['player_id'] == d_id].index[0],"assign"] = assign
-                self.stable["p_rank"] = self.stable.groupby(["assign"])["score"].rank(ascending=False,method='min')
-
-                return True
-
             else:
-                if assign == "h":
+                if assign == "h" or assign == "l":
                     #スコア記入処理
                     self.stable.at[self.stable[self.stable['player_id'] == d_id].index[0],"score"] = score
                     self.stable.at[self.stable[self.stable['player_id'] == d_id].index[0],"assign"] = assign
@@ -308,9 +301,7 @@ class MogiSA(du.DBwrapper):
 
     
                     return True
-                
-                elif(assign == "l"):
-                    return False
+            
                 else:
                     return False
                        
@@ -329,21 +320,39 @@ class MogiSA(du.DBwrapper):
         self.pl_amount = (self.stable == 'l').sum().sum()
         self.ph_amount = (self.stable == 'h').sum().sum()
 
+        if self.pl_amount == 0:
+            self.pl_amount = 1
+        
+        if self.ph_amount == 0:
+            self.ph_amount = 1
 
         #New_mmr計算
         for index, row in self.stable.iterrows():
             if row["is_regi"] is True:
                 if int(row["p_rank"]) == 1:
-                    self.stable.at[index, 'new_mr'] = row['player_mr'] + 200
+                    if row["assign"] == "l":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(1000/self.pl_amount)
+                    elif row["assgin"] == "h":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(1000/self.ph_amount)
+
                 
                 elif int(row["p_rank"]) == 2:
-                    self.stable.at[index, 'new_mr'] = row['player_mr'] + 100
+                    if row["assign"] == "l":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(500/self.pl_amount)
+                    elif row["assgin"] == "h":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(500/self.ph_amount)
                 
                 elif int(row["p_rank"]) == 3:
-                    self.stable.at[index, 'new_mr'] = row['player_mr'] + 50
+                    if row["assign"] == "l":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(250/self.pl_amount)
+                    elif row["assgin"] == "h":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(250/self.ph_amount)
 
                 else:
-                    self.stable.at[index, 'new_mr'] = row['player_mr'] + 10
+                    if row["assign"] == "l":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(100/self.pl_amount)
+                    elif row["assgin"] == "h":
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(100/self.ph_amount)
 
                 
                 try:

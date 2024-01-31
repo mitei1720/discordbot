@@ -219,7 +219,29 @@ class SA(commands.Cog):
 
         
     
+    @app_commands.command()
+    @app_commands.check(is_sachan)
+    @app_commands.default_permissions(manage_guild=True)
+    async def l(self, interaction:discord.Interaction):
+        """
+        [admin専用]スコアタ課題の再掲示
+        """
+        await interaction.response.defer()
+        llist = []
+        hlist = []
+        with su.MogiSA(SA_INFO) as mogi:
+            hlist , llist = mogi.get_songs()
 
+        embed = discord.Embed(
+                                            title = "今週のスコアタ課題曲",
+                                        )
+        embed.add_field(name="課題h[対象者:16000<=MR]",value=str(hlist[0]),inline=False)
+        embed.add_field(name="課題h[対象者:16000<=MR]",value=str(hlist[1]),inline=False)
+        embed.add_field(name="課題l",value=str(llist[0]),inline=False)
+        embed.add_field(name="課題l",value=str(llist[1]),inline=False)
+        
+        await interaction.followup.send(embed = embed)
+           
 
 
     #debugged
@@ -306,7 +328,7 @@ class SA(commands.Cog):
 
 
     #debugged
-    @tasks.loop(minutes = 1)
+    @tasks.loop(minutes = 20)
     async def managesa(self):
     # 現在の時刻
         now = dt.datetime.now()
@@ -320,6 +342,7 @@ class SA(commands.Cog):
                     print("now:\t"+now.strftime('%Y/%m/%d %H:%M:%S.%f'))
                     canfin =  dt.datetime.strptime(mogi.end, '%Y/%m/%d %H:%M:%S.%f') < now
                     print("sa_end_can:\t"+str(canfin))
+                    day_before = (dt.datetime.strptime(mogi.end, '%Y/%m/%d %H:%M:%S.%f') - dt.timedelta(days=1) < now) and (dt.datetime.strptime(mogi.end, '%Y/%m/%d %H:%M:%S.%f') - dt.timedelta(hours=23,minutes= 40) > now)
 
                 
                 if canfin:
@@ -330,6 +353,13 @@ class SA(commands.Cog):
                     #新しく開始する
                     task2 = asyncio.create_task(self.start_sa(chan_id))
                     await task2
+
+                if day_before:
+                    guild = self.bot.get_guild(int(settings.GUILD_ID))
+                    role = guild.get_role(int(MOGI_ROLE_ID))
+                    channel = self.bot.get_channel(chan_id)
+                    await channel.send(role.mention + " 提出締め切り1日前です。")
+                    
             else:
                 #スコアタが開催されていなかったら開始する
                 task2 = asyncio.create_task(self.start_sa(chan_id))
@@ -355,20 +385,30 @@ class SA(commands.Cog):
                 await channel2.send("ただいまより提出を開始します----------\n写真を載せた後、!submit [課題種別] [スコア]として送信してください\n例: !submit h 1010000")
 
                 #曲決め
-                hl = [14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,
-                      15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,
-                      15.1,15.1,15.1,15.1,15.1,
+                hl = [14.6,
+                      14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,14.7,
+                      14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,14.8,
+                      14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,14.9,
+                      15.0,15.0,15.0,
+                      15.1,
                       15.2,
                       15.3,
                       15.4
                       ]
-                ll = [13.9,
+                ll = [13.2,
+                      13.3,
+                      13.4,
+                      13.5,13.5,
+                      13.6,13.6,
+                      13.7,13.7,
+                      13.8,13.8,
+                      13.9,13.9,
                       14.0,14.0,
-                      14.1,14.1,14.1,14.1,
-                      14.2,14.2,14.2,14.2,14.2,14.2,
-                      14.3,14.3,14.3,14.3,14.3,14.3,
-                      14.4,14.4,14.4,14.4,
-                      14.5,14.5,
+                      14.1,14.1,
+                      14.2,14.2,
+                      14.3,14.3,
+                      14.4,
+                      14.5,
                       14.6
                       ]
                 
@@ -395,10 +435,10 @@ class SA(commands.Cog):
                 embed = discord.Embed(
                                             title = "今週のスコアタ課題曲",
                                         )
-                embed.add_field(name="課題h[対象者:15000<=MR]",value=str(hsong1),inline=False)
-                embed.add_field(name="課題h[対象者:15000<=MR]",value=str(hsong2),inline=False)
-                embed.add_field(name="課題l[対象者:模擬未登録,MR<16500]",value=str(lsong1),inline=False)
-                embed.add_field(name="課題l[対象者:模擬未登録,MR<16500]",value=str(lsong2),inline=False)
+                embed.add_field(name="課題h[対象者:16000<=MR]",value=str(hsong1),inline=False)
+                embed.add_field(name="課題h[対象者:16000<=MR]",value=str(hsong2),inline=False)
+                embed.add_field(name="課題l",value=str(lsong1),inline=False)
+                embed.add_field(name="課題l",value=str(lsong2),inline=False)
 
                 
                 await channel.send(embed = embed)
