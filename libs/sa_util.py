@@ -198,7 +198,7 @@ class MogiSA(du.DBwrapper):
         
         for lsong in self.lsongs:
             for row in self.get("all_music",{"meta_id":lsong}):
-                hdatalist.append(mu.Music_data(row["meta_id"],row["meta_title"],row["meta_artist"],row["meta_genre"],row["diff"],row["level"],row["const"]))
+                ldatalist.append(mu.Music_data(row["meta_id"],row["meta_title"],row["meta_artist"],row["meta_genre"],row["diff"],row["level"],row["const"]))
 
         return hdatalist,ldatalist
     

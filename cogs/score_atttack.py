@@ -218,11 +218,11 @@ class SA(commands.Cog):
         
 
         
-    
+    #error
     @app_commands.command()
     @app_commands.check(is_sachan)
     @app_commands.default_permissions(manage_guild=True)
-    async def l(self, interaction:discord.Interaction):
+    async def ls(self, interaction:discord.Interaction):
         """
         [admin専用]スコアタ課題の再掲示
         """
