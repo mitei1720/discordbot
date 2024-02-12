@@ -130,9 +130,8 @@ import settings
 
 class DB:
     def __init__(self, filePath=None):
-        if filePath != None:
-            self.filePath = filePath
-            self.dbname = settings.SQL_DBNM
+        self.filePath = filePath
+        self.dbname = settings.SQL_DBNM
 
     def open(self, filePath=None):
         if filePath != None:
@@ -188,6 +187,9 @@ class DBwrapper(DB):
     GET_ALTER_TABLE_QUERY = "ALTER TABLE {0} ADD {1}"
     GET_RENAME_TABLE_QUERY = "RENAME TABLE {0} TO {1}"
 
+
+    def __init__(self, filePath=None):
+        super().__init__(filePath)
 
     #debugged
     def set(self, tablename, args={}):
