@@ -80,6 +80,17 @@ def id_to_username(user_id:int) -> Union[str,None]:
             username = row["username"]
     
     return username
+
+
+def username_to_id(username:str) -> Union[int,None]:
+    uid = None
+    with du.DBwrapper(DATABASE) as db:
+        dat = {"username":username}
+        for row in db.get("mogiregister",dat):
+            uid = row["d_id"]
+        
+    return uid
+    
             
         
 
@@ -342,7 +353,14 @@ def player_register(username:str,user_id:discord.User.id,maxrate:float) -> Tuple
         dat = {"d_id":user_id}
         nm = db.count("mogiregister",dat)
 
+        #同じusernameが使われていないかチェック
+        dat = {"username":username}
+        nn = db.count("mogiregister",dat)
+        
         if nm == 0:
+            if nn >= 1:
+                return False,0
+
             #されていなかったら→　mogiregisterに登録。初期レートを計算,Player_historyを作る。
             #初期股濡レートの計算
             tmp_r = math.floor(maxrate)
@@ -414,6 +432,10 @@ def fix_player(username:str,user_id:discord.User.id,maxrate:float) -> bool:
             try:
                 sql = f"UPDATE mogiregister SET " 
                 if(username is not None):
+                    dat = {"username":username}
+                    nn = db.count("mogiregister",dat)
+                    if(nn >= 1):
+                        return False
                     sql = sql + f"username = '{username}',"
                 
                 if(maxrate is not None):

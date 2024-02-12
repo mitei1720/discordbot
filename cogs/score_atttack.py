@@ -45,129 +45,6 @@ class SA(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-
-
-    #debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    async def register(self, interaction: discord.Interaction, username:str,maxrate:float):
-        """スコアタ登録コマンド,username(英数字のみ)とmaxrateは必須"""
-
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-
-        #await interaction.response.defer()
-        #上を使わない場合はawait interaction.response.send_messageで返す
-        #上を使う場合はawait interaction.followup.send(message, ephemeral=hidden) (返り値webhook注意)
-
-        #登録
-        
-        if username is None:
-            await interaction.response.send_message("usernameを入力してください",ephemeral=True)
-            return
-        
-        if maxrate is None:
-            await interaction.response.send_message("maxrateを入力してください",ephemeral=True)
-            return
-        
-        if not (username.isalnum()):
-            await interaction.response.send_message("usernameに記号を含めないでください",ephemeral=True)
-            return
-
-
-        await interaction.response.defer()
-        suc,rate = mou.player_register(username,interaction.user.id,maxrate)
-
-        if suc is True:
-            #成功した場合はmogi権限を与え、成功と初期MRを知らせる
-            
-            #mogiの権限を与える
-            guild = self.bot.get_guild(int(settings.GUILD_ID))
-            member = guild.get_member(interaction.user.id)
-            role = guild.get_role(int(MOGI_ROLE_ID))
-
-            await member.add_roles(role)
-        
-
-            #成功と初期レートを知らせる
-            await interaction.followup.send("Successfully registerd as["+username+"].\n"+username+"の初期股濡レートは["+str(rate)+"]です。" )
-        else:
-            #失敗した場合はエラーを通告
-            await interaction.followup.send("[Error] Try again.",ephemeral=True)
-
-   
-
-    #debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    async def fix_rate(self, interaction: discord.Interaction, username:str=None,maxrate:float=None):
-        """プロフィール更新コマンド"""
-
-        # interactionは3秒以内にレスポンスしないといけないとエラーになるのでこの処理を入れる。
-
-        #await interaction.response.defer()
-        #上を使わない場合はawait interaction.response.send_messageで返す
-        #上を使う場合はawait interaction.followup.send(message, ephemeral=hidden) (返り値webhook注意)
-
-        if username is not None and not (username.isalnum()):
-            await interaction.response.send_message("usernameに記号を含めないでください",ephemeral=True)
-            return
-        
-
-        if username is None and maxrate is None:
-            #エラー
-            await interaction.response.send_message("変更要素がありません.")
-        else:
-            await interaction.response.defer()
-            #変更
-            if mou.fix_player(username,interaction.user.id,maxrate):
-                name = mou.id_to_username(interaction.user.id)
-                await interaction.followup.send("Successfully fixed. -> ["+name+"]")
-            else:
-                await interaction.followup.send("[Error] Try again.",ephemeral=True)
-
-    
-
-    #Debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    #@app_commands.checks.has_any_role(1054345096620945408, 1054345230389882980)
-    @app_commands.default_permissions(manage_guild=True)
-    async def mute_player(self, interaction:discord.Interaction,member:Optional[discord.Member] = None):
-        """
-        [admin専用コマンド]mogi_playerロールの剥奪
-        member: mogi権利を剥奪したいプレイヤー
-        """
-        guild = self.bot.get_guild(int(settings.GUILD_ID))
-        role = guild.get_role(int(MOGI_ROLE_ID))
-        await member.remove_roles(role)
-        await interaction.response.send_message("[Mute]" + member.name +".")
-
-   
-    #Debugged
-    @app_commands.command()
-    @app_commands.check(is_regichan)
-    @app_commands.default_permissions(manage_guild=True)
-    async def activate_player(self, interaction:discord.Interaction,member:Optional[discord.Member] = None):
-        """
-        [admin専用コマンド]mogi_playerロールの復帰
-        [※]muteされた人のみにコマンドを使用してください
-        member: mogi権利を付与したいプレイヤー
-        """
-        guild = self.bot.get_guild(int(settings.GUILD_ID))
-        role = guild.get_role(int(MOGI_ROLE_ID))
-        await member.add_roles(role)
-        await interaction.response.send_message("[UnMute]" + member.name +".")
-
-    
-
-    #debugged
-    @register.error
-    @fix_rate.error
-    @mute_player.error
-    @activate_player.error
-    async def chan_error(self, interaction, error):
-        if isinstance(error, discord.app_commands.errors.CheckFailure):
-            await interaction.response.send_message("このチャンネルでは使用できません",ephemeral=True)
         
 
 
@@ -461,10 +338,11 @@ class SA(commands.Cog):
                 embed = discord.Embed(title="結果発表[h]")
                 for row in hrank.itertuples():
                     player = guild.get_member(row.player_id)
-                    if mou.id_to_username(row.player_id) is None :
-                        embed.add_field(name=str(int(row.p_rank))+"位 " + player.name+"(" +player.mention+")", value="score:"+str(row.score),inline=False)
+                    pname = mou.id_to_username(row.player_id)
+                    if pname is None :
+                        embed.add_field(name=str(int(row.p_rank))+"位 " + "ゲスト"+"(" +player.mention+")", value="score:"+str(row.score),inline=False)
                     else:
-                        embed.add_field(name=str(int(row.p_rank))+"位 " + player.name+"(" +player.mention+")", value="score:"+str(row.score)+"\n"
+                        embed.add_field(name=str(int(row.p_rank))+"位 " + pname+"(" +player.mention+")", value="score:"+str(row.score)+"\n"
                                         +"MR:"+str(row.player_mr)+"->"+str(row.new_mr)+"(Delta:"+str(row.new_mr - row.player_mr)+")",inline=False)
                         
                 await channel.send(embed = embed)
@@ -477,9 +355,9 @@ class SA(commands.Cog):
                     player = guild.get_member(row.player_id)
                     pname = mou.id_to_username(row.player_id)
                     if pname is None :
-                        embed.add_field(name=str(int(row.p_rank))+"位 " +"ゲスト"+"(" +player.name+")", value="score:"+str(row.score),inline=False)
+                        embed.add_field(name=str(int(row.p_rank))+"位 " +"ゲスト"+"(" +player.mention+")", value="score:"+str(row.score),inline=False)
                     else:
-                        embed.add_field(name=str(int(row.p_rank))+"位 " + pname+"(" +player.name+")", value="score:"+str(row.score)+"\n"
+                        embed.add_field(name=str(int(row.p_rank))+"位 " + pname+"(" +player.mention+")", value="score:"+str(row.score)+"\n"
                                         +"MR:"+str(row.player_mr)+"->"+str(row.new_mr)+"(Delta:"+str(row.new_mr - row.player_mr)+")",inline=False)
                 
                 await channel.send(embed = embed)

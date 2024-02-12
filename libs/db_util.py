@@ -120,7 +120,7 @@ import settings
 #   カラム名
 #       id              PrimaryKey
 #       end             イベント終了日時
-#       kind            イベント種別(sc,2v2)            
+#       kind            イベント種別(fix,sa,2v2)            
 #       ev_id           イベントid
 #       new_mr          新MR          
 
