@@ -71,7 +71,7 @@ class Player_info(commands.Cog):
                 embed = discord.Embed(
                     title = username +" さんのMR",
                 )
-                embed.add_field(name=str(rate))
+                embed.add_field(name=str(rate),value="")
                 await interaction.followup.send(embed=embed)
 
 
