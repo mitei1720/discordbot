@@ -13,7 +13,8 @@ INITIAL_EXTENSIONS = [
   "cogs.random",
   "cogs.o_side",
   #"cogs.mogi",
-  "cogs.score_atttack"
+  "cogs.score_atttack",
+  "cogs.player_info"
 ]
 
 
