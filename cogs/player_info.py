@@ -218,7 +218,7 @@ class Player_info(commands.Cog):
         
         if pu.fix(username,delta):
             embed = discord.Embed(
-                                            title = "MR変更通知",
+                                            title = "MR変更通知"
                                         )
             embed.add_field(name="対象者",value=player.mention)
             embed.add_field(name="MR変更差分",value=delta)
@@ -231,6 +231,8 @@ class Player_info(commands.Cog):
 
 
             await player.send(embed=embed)
+        
+        return
 
 
 

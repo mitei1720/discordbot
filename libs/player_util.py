@@ -58,6 +58,9 @@ def fix(username:str, delta:int)-> bool:
             sql = f"update mogiregister set rate = {crate + delta} where d_id = {id};"
             db.query(sql)
             db.commit()
+            return True
+
+            
         
         except Exception as e:
             print("update_Playerhistory")
@@ -67,8 +70,9 @@ def fix(username:str, delta:int)-> bool:
             print(e)
             db.rollback()
             return False
+        
     
-    return True
+   
 
         
             
