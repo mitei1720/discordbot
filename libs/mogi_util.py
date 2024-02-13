@@ -355,13 +355,13 @@ def player_register(username:str,user_id:discord.User.id,maxrate:float) -> Tuple
         print("id_count:"+str(nm))
 
         #同じusernameが使われていないかチェック
-        dat = {"username":username}
-        nn = db.count("mogiregister",dat)
-        print("un_count:"+str(nn))
+        #dat = {"username":username}
+        #nn = db.count("mogiregister",dat)
+        #print("un_count:"+str(nn))
         
         if nm == 0:
-            if nn >= 1:
-                return False,0
+            #if nn >= 1:
+            #    return False,0
 
             #されていなかったら→　mogiregisterに登録。初期レートを計算,Player_historyを作る。
             #初期股濡レートの計算
@@ -436,10 +436,10 @@ def fix_player(username:str,user_id:discord.User.id,maxrate:float) -> bool:
             try:
                 sql = f"UPDATE mogiregister SET " 
                 if(username is not None):
-                    dat = {"username":username}
-                    nn = db.count("mogiregister",dat)
-                    if(nn >= 1):
-                        return False
+                    #dat = {"username":username}
+                    #nn = db.count("mogiregister",dat)
+                    #if(nn >= 1):
+                    #    return False
                     sql = sql + f"username = '{username}',"
                 
                 if(maxrate is not None):
