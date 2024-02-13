@@ -4,8 +4,8 @@ from discord.ext import commands
 import settings
 from typing import Optional
 from libs import player_util as pu
-from libs import mogi_util as mu
-from libs import music_util as mou
+from libs import mogi_util as mou
+from libs import music_util as mu
 import pandas as pd
 
 #あとでログを出すようにする...かも
