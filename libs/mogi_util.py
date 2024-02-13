@@ -352,10 +352,12 @@ def player_register(username:str,user_id:discord.User.id,maxrate:float) -> Tuple
         #データベースに登録されているかチェック。
         dat = {"d_id":user_id}
         nm = db.count("mogiregister",dat)
+        print("id_count:"+str(nm))
 
         #同じusernameが使われていないかチェック
         dat = {"username":username}
         nn = db.count("mogiregister",dat)
+        print("un_count:"+str(nn))
         
         if nm == 0:
             if nn >= 1:
@@ -421,6 +423,8 @@ def fix_player(username:str,user_id:discord.User.id,maxrate:float) -> bool:
         #データベースに登録されているかチェック。
         dat = {"d_id":user_id}
         nm = db.count("mogiregister",dat)
+        print("id_count:"+str(nm))
+        
 
         if nm == 0:
             #されていなかったら→　False。

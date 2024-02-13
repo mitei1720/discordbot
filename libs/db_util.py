@@ -338,6 +338,7 @@ class DBwrapper(DB):
             sql = f"select count(*) from {tablename} where {' and '.join(wh)}"
         else:
             sql = f"select count(*) from {tablename}"
+        print(sql)
         row = self.fetch(sql)
         return row.__next__()[0]
 
