@@ -188,9 +188,6 @@ class DBwrapper(DB):
     GET_RENAME_TABLE_QUERY = "RENAME TABLE {0} TO {1}"
 
 
-    def __init__(self, filePath=None):
-        super().__init__(filePath)
-
     #debugged
     def set(self, tablename, args={}):
         """
