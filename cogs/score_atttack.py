@@ -69,10 +69,11 @@ class SA(commands.Cog):
         [admin専用]一週間に1回のスコアアタックを中止するコマンド
         """
         #cancel_saを呼び出す
-        await interaction.response.send_message("現在のスコアタを中止します\n")
-        task1 = asyncio.create_task(self.end_sa(SA_INFO))
         await task1
         self.managesa.stop()
+        await interaction.response.send_message("現在のスコアタを中止します\n")
+        task1 = asyncio.create_task(self.end_sa(SA_INFO))
+        
 
         
 
@@ -320,7 +321,7 @@ class SA(commands.Cog):
                 
                 await channel.send(embed = embed)
                                     
-                
+
 
 
 
