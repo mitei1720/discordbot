@@ -104,7 +104,7 @@ class CRandom(commands.Cog):
                 await interaction.followup.send(embed = embed)
 
     @app_commands.command()
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_guild=True)
     async def song_import(self, interaction:discord.Interaction):
         """[admin専用コマンド]song_dataを更新。ウニのアプデの日に使ってください"""
         await interaction.response.defer()

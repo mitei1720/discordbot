@@ -153,6 +153,16 @@ class MogiSA(du.DBwrapper):
     def get_players(self)->list:
         return self.stable["player_id"].to_list()
     
+
+    def setEnd(self, enddate:dt) -> bool:
+        """
+        SAの終了日時変更
+        入力日時はUS WEST付にすること
+        """
+        self.end = enddate.strftime('%Y/%m/%d %H:%M:%S.%f')
+        return True
+        
+    
     def register_song(self,song_id1:str,song_id2:str,dset:str) -> bool:
         """
         SAの課題曲を登録する関数

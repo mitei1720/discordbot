@@ -162,6 +162,9 @@ class SA(commands.Cog):
                     await channel.send("存在しないスコアを記入しています")
                     return
                 
+                if not su.is_on_sa(SA_INFO):
+                    await channel.send("スコアタ開催期間ではありません")
+                    return
                 #処理を書く-----------------------------------
     
                 with su.MogiSA(SA_INFO) as mogi:
@@ -178,7 +181,42 @@ class SA(commands.Cog):
     
                         else:
                             await channel.send("提出種別を確認してください")
-    
+
+            
+            if tlist[0] == "!setend":
+                if len(tlist) != 5:
+                    await channel.send("!setend [年] [月] [日] [時] \nとして送信してください")
+                    return
+                
+                if not su.is_on_sa(SA_INFO):
+                    await channel.send("スコアタ開催期間ではありません")
+                    return
+                
+                guild = self.bot.get_guild(int(settings.GUILD_ID))
+                member = guild.get_member(message.author.id)
+                adminrole = guild.get_role(int(settings.ADMIN_ROLE))
+
+                if not (adminrole in member.roles):
+                    await channel.send("権限がありません")
+                    return 
+                
+                year = int(tlist[1])
+                month = int(tlist[2])
+                day = int(tlist[3])
+                hour = int(tlist[4])
+
+                newend = dt.datetime(year, month, day, hour)
+                #US WEST
+                newend = newend - dt.timedelta(hours=9)
+                with su.MogiSA(SA_INFO) as mogi:
+                    if mogi.setEnd(newend):
+                        await channel.send("スコアタ終了日時を変更しました。\n --->" + newend.strftime('%Y/%m/%d %H:%M:%S.%f') + "(日本時間)")
+                    else:
+                        await channel.send("error")
+                    return
+
+
+     
 
         elif message.channel.id in [MOGI_REGI_CHANNEL]:
             if  tlist[0] == "!init_all_mogi":
