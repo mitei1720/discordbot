@@ -341,28 +341,28 @@ class MogiSA(du.DBwrapper):
             if row["is_regi"] is True:
                 if int(row["p_rank"]) == 1:
                     if row["assign"] == "l":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(1000/self.pl_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 333
                     elif row["assign"] == "h":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(1000/self.ph_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 333
 
                 
                 elif int(row["p_rank"]) == 2:
                     if row["assign"] == "l":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(500/self.pl_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 166
                     elif row["assign"] == "h":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(500/self.ph_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 166
                 
                 elif int(row["p_rank"]) == 3:
                     if row["assign"] == "l":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(250/self.pl_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 83
                     elif row["assign"] == "h":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(250/self.ph_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 83
 
                 else:
                     if row["assign"] == "l":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(100/self.pl_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 33
                     elif row["assign"] == "h":
-                        self.stable.at[index, 'new_mr'] = row['player_mr'] + int(100/self.ph_amount)
+                        self.stable.at[index, 'new_mr'] = row['player_mr'] + 33
 
                 
                 try:
